@@ -11,35 +11,12 @@ export class RestaurantsService {
     @InjectModel(Restaurant.name) private restaurantModel: Model<RestaurantDocument>,
   ) {}
 
-  // async create(createRestaurantDto: CreateRestaurantDto): Promise<RestaurantDocument> {
-  //   const slug = this.generateSlug(createRestaurantDto.name);
-    
-  //   // Check if slug already exists
-  //   const existing = await this.restaurantModel.findOne({ slug }).exec();
-  //   if (existing) {
-  //     throw new ConflictException('Restaurant with similar name already exists');
-  //   }
-
-  //   const createdRestaurant = new this.restaurantModel({
-  //     ...createRestaurantDto,
-  //     slug,
-  //     settings: createRestaurantDto.settings || {
-  //       currency: 'USD',
-  //       timezone: 'UTC',
-  //       allowTableOrders: true,
-  //       allowRoomOrders: true,
-  //     },
-  //   });
-    
-  //   return createdRestaurant.save();
-  // }
   private generateSlug(name: string): string {
   const baseSlug = name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
   
-  // Add timestamp to make it more unique
   const timestamp = Date.now().toString(36);
   const random = Math.random().toString(36).substring(2, 8);
   
@@ -49,13 +26,9 @@ export class RestaurantsService {
 async create(createRestaurantDto: CreateRestaurantDto): Promise<RestaurantDocument> {
   const slug = this.generateSlug(createRestaurantDto.name);
   
-  console.log('Creating restaurant with slug:', slug);
 
-  // Check if slug already exists (very unlikely with timestamp+random)
   const existing = await this.restaurantModel.findOne({ slug }).exec();
   if (existing) {
-    console.log('Slug collision detected, regenerating...');
-    // If by some miracle there's a collision, regenerate
     return this.create(createRestaurantDto);
   }
 
@@ -77,14 +50,7 @@ async create(createRestaurantDto: CreateRestaurantDto): Promise<RestaurantDocume
     return this.restaurantModel.find().populate('owner').exec();
   }
 
-  // async findById(id: string): Promise<RestaurantDocument> {
-  //   const restaurantId = new Types.ObjectId(id);
-  //   const restaurant = await this.restaurantModel.findById(restaurantId).populate('owner').exec();
-  //   if (!restaurant) {
-  //     throw new NotFoundException('Restaurant not found');
-  //   }
-  //   return restaurant;
-  // }
+ 
 async findById(id: string): Promise<RestaurantDocument> {
 
   if (!id || !Types.ObjectId.isValid(id)) {

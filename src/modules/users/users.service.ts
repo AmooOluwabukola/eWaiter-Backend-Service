@@ -21,6 +21,23 @@ export class UsersService {
     return createdUser.save();
   }
 
+
+  async findByVerificationToken(token: string) {
+  return this.userModel
+    .findOne({ emailVerificationToken: token })
+    .populate('restaurant'); // 👈 THIS
+}
+
+
+  async findByPasswordResetToken(token: string): Promise<UserDocument | null> {
+    return this.userModel
+      .findOne({
+        passwordResetToken: token,
+        passwordResetExpires: { $gt: new Date() },
+      })
+      .exec();
+  }
+
 //   find all users by restaurant
   async findAll(restaurantId: string): Promise<UserDocument[]> {
     const restaurantObjectId = new Types.ObjectId(restaurantId);

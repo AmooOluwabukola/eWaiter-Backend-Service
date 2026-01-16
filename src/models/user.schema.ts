@@ -5,7 +5,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export type UserDocument = User & Document;
 
 export enum UserRole {
-  SUPER_ADMIN = 'super_admin',
+  SUPER_ADMIN= 'super_admin',
   RESTAURANT_ADMIN = 'restaurant_admin',
   KITCHEN_STAFF = 'kitchen_staff',
   ATTENDANT = 'attendant',
@@ -24,16 +24,15 @@ export class User {
   @Prop({ required: true, unique: true })
   email: string;
 
-  @ApiProperty()
   @Prop({ required: true })
   password: string;
 
   @ApiProperty({ enum: UserRole })
-  @Prop({ type: String, enum: UserRole, default: UserRole.RESTAURANT_ADMIN })
+  @Prop({ type: String, enum: UserRole, required: true })
   role: UserRole;
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId, ref: 'Restaurant' })
+  @Prop({ type: Types.ObjectId, ref: 'Restaurant', required: true })
   restaurant: Types.ObjectId;
 
   @ApiProperty()
@@ -41,12 +40,24 @@ export class User {
   isActive: boolean;
 
   @ApiProperty()
-  @Prop()
-  phone: string;
+  @Prop({ default: false })
+  isEmailVerified: boolean;
 
   @ApiProperty()
   @Prop()
-  avatar: string;
+  emailVerificationToken?: string;
+
+  @ApiProperty()
+  @Prop()
+  emailVerificationExpires?: Date;
+
+  @ApiProperty()
+  @Prop()
+  passwordResetToken?: string;
+
+  @ApiProperty()
+  @Prop()
+  passwordResetExpires?: Date;
 
   @ApiProperty()
   createdAt?: Date;
@@ -56,3 +67,9 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+// Add indexes
+UserSchema.index({ email: 1 });
+UserSchema.index({ restaurant: 1, role: 1 });
+UserSchema.index({ restaurant: 1, isActive: 1 });
+UserSchema.index({ emailVerificationToken: 1 });

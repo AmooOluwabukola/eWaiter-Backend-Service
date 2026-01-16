@@ -9,6 +9,8 @@ import { UploadsModule } from './modules/uploads/uploads.module';
 import { MenuItemsModule } from './modules/menu-items/menu-items.module';
 import { DashboardModule } from './modules/users/dashboard/dashboard.module';
 import { OrdersModule } from './modules/orders/orders.module';
+import { EmailModule } from './modules/email/email.module';
+import { EmailService } from './modules/email/email.service';
 
 @Module({
   imports: [
@@ -27,7 +29,10 @@ import { OrdersModule } from './modules/orders/orders.module';
     MenuItemsModule,
     UploadsModule,
     OrdersModule,
+    EmailModule,
   ],
+  providers: [EmailService],
+  controllers: [],
 
 })
 export class AppModule {}
