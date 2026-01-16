@@ -22,6 +22,10 @@ export interface ConfigAttributes {
   email: {
     host: string;
     port: number;
+    secure: boolean;
+    tls: {
+      rejectUnauthorized: boolean;
+    };
     user: string;
     password: string;
     from: string;
@@ -49,6 +53,10 @@ const configuration = (): ConfigAttributes => ({
   email: {
     host: process.env.EMAIL_HOST || '',
     port: parseInt(process.env.EMAIL_PORT || '587', 10),
+    secure: false,
+    tls: {
+      rejectUnauthorized: false,
+    },
     user: process.env.EMAIL_USER || '',
     password: process.env.EMAIL_PASSWORD || '',
     from: process.env.EMAIL_FROM || 'E-Waiter <noreply@ewaiter.com>',
@@ -65,13 +73,15 @@ const configSchema = Joi.object<Record<string, string>>({
   MONGODB_URI: Joi.string().required(),
   JWT_SECRET: Joi.string().required(),
   JWT_EXPIRATION: Joi.string().default('7d'),
-  NODE_ENV: Joi.string().valid('development', 'production').default('development'),
-  
+  NODE_ENV: Joi.string()
+    .valid('development', 'production')
+    .default('development'),
+
   // Cloudinary
   CLOUDINARY_CLOUD_NAME: Joi.string().optional(),
   CLOUDINARY_API_KEY: Joi.string().optional(),
   CLOUDINARY_API_SECRET: Joi.string().optional(),
-  
+
   // App
   APP_CLIENT_URL: Joi.string().default('http://localhost:5173'),
 });
